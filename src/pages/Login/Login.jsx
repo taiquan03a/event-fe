@@ -1,129 +1,128 @@
 import React, { useState } from 'react';
 import styles from './login.module.css';
 // import { useNavigate } from 'react-router-dom';
-// import Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 // import path from '../../constant/path';
-
+import authApi from '../../api/auth';
 const Login = () => {
     const [isSignUpMode, setIsSignUpMode] = useState(false);
-    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [usernameLogin, setUsernameLogin] = useState('');
+    const [emailLogin, setEmailLogin] = useState('');
     const [passwordLogin, setPasswordLogin] = useState('');
     // const navigate = useNavigate();
   
     const handleSignUp = () => {
       setIsSignUpMode(true);
-      setUsernameLogin('')
-      setPasswordLogin('')
+      setEmailLogin('');
+      setPasswordLogin('');
     };
   
     const handleSignIn = () => {
       setIsSignUpMode(false);
-      setUsername('')
-      setEmail('')
-      setPassword('')
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPassword('');
+    };
+
+    const handleSignUpSubmit = async (e) => {
+      e.preventDefault();
+      const newUser = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+      };
+  
+      try {
+        const response = await authApi.register(newUser); // Replace authApi.createUser with your actual API call
+        console.log('Signup Successful:', response);
+        if(response.success){
+            await Swal.fire({
+                icon: 'success',
+                text: response.message,
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: false,
+            });
+
+            setIsSignUpMode(false);
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setPassword('');
+        } else {
+            await Swal.fire({
+                icon: 'error',
+                text: response.message,
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: false,
+            });
+        }
+      } catch (error) {
+        console.error('Signup Error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Đăng ký không thành công!',
+          text: 'Vui lòng thử lại sau.',
+        });
+      }
     };
   
-    // const handleSignUpSubmit = async (e) => {
-    //   e.preventDefault();
-    //   const newUser = {
-    //     username: username,
-    //     email: email,
-    //     password: password,
-    //     cart: [],
-    //     historyProduct:[],
-    //     orderProduct: []
-    //   };
+    const handleSignInSubmit = async (e) => {
+      e.preventDefault();
+      const userCredentials = {
+        email: emailLogin,
+        password: passwordLogin,
+      };
   
-    //   try {
-    //     const response = await userApi.createUser(newUser);
-    //     console.log('Signup Successful:', response);
-    //     if(response.success){
-    //         await Swal.fire({
-    //             icon: 'success',
-    //             text: response.message,
-    //             showConfirmButton: false, // Ẩn nút OK
-    //             timer: 1000, // Tự động đóng sau 3 giây (3000 miligiây)
-    //             timerProgressBar: false, // Hiển thị thanh tiến trình đếm ngược
-    //         });
-
-    //         setIsSignUpMode(false);
-    //         setUsername('')
-    //         setEmail('')
-    //         setPassword('')
-    //     }
-    //     else{
-    //         await Swal.fire({
-    //             icon: 'error',
-    //             text: response.message,
-    //             showConfirmButton: false, // Ẩn nút OK
-    //             timer: 1000, // Tự động đóng sau 3 giây (3000 miligiây)
-    //             timerProgressBar: false, // Hiển thị thanh tiến trình đếm ngược
-    //         });
-    //     }
-    //   } catch (error) {
-    //     console.error('Signup Error:', error);
-    //     Swal.fire({
-    //       icon: 'error',
-    //       title: 'Đăng ký không thành công!',
-    //       text: 'Vui lòng thử lại sau.',
-    //     });
-    //   }
-    // };
-  
-    // const handleSignInSubmit = async (e) => {
-    //   e.preventDefault();
-    //   const userCredentials = {
-    //     username: usernameLogin,
-    //     password: passwordLogin
-    //   };
-  
-    //   try {
-    //     const response = await userApi.loginUser(userCredentials);
-    //     console.log('Đăng nhập thành công:', response);
-    //     localStorage.setItem('userId', response.user.id);
-    //     await Swal.fire({
-    //         icon: 'success',
-    //         text: response.message,
-    //         showConfirmButton: false, // Ẩn nút OK
-    //         timer: 1000, // Tự động đóng sau 3 giây (3000 miligiây)
-    //         timerProgressBar: false, // Hiển thị thanh tiến trình đếm ngược
-    //     });
-    //     navigate(path.home);
-    //     window.location.reload()
-    //   } catch (error) {
-    //     console.error('Login Error:', error);
-    //     Swal.fire({
-    //       icon: 'error',
-    //       title: 'Đăng nhập không thành công!',
-    //       text: 'Vui lòng kiểm tra lại thông tin đăng nhập.',
-    //     });
-    //   }
-    // };
+      try {
+        const response = await authApi.login(userCredentials); // Replace authApi.loginUser with your actual API call
+        console.log('Đăng nhập thành công:', response);
+        await Swal.fire({
+            icon: 'success',
+            text: response.message,
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: false,
+        });
+        // navigate(path.home);
+        // window.location.reload();
+      } catch (error) {
+        console.error('Login Error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Đăng nhập không thành công!',
+          text: 'Vui lòng kiểm tra lại thông tin đăng nhập.',
+        });
+      }
+    };
 
   return (
     <div className={`${styles.container} ${isSignUpMode ? styles['sign-up-mode'] : ''}`}>
       <div className={styles['forms-container']}>
         <div className={styles['signin-signup']}>
-          <form className={styles['sign-in-form']} >
+          <form className={styles['sign-in-form']} onSubmit={handleSignInSubmit}>
             <h2 className={styles.title}>Đăng nhập</h2>
             <div className={styles['input-field']}>
               <i className="fas fa-user"></i>
               <input
-                className={`${styles['input-xxx']}`}
-                type="text"
-                placeholder="Tài khoản"
-                value={usernameLogin}
-                onChange={(e) => setUsernameLogin(e.target.value)}
+                className={`${styles['input-xxx']} w-full h-full px-4 outline-none rounded-3xl`}
+                type="email"
+                placeholder="Email"
+                value={emailLogin}
+                onChange={(e) => setEmailLogin(e.target.value)}
                 required
               />
             </div>
             <div className={styles['input-field']}>
               <i className="fas fa-lock"></i>
               <input
-                className={`${styles['input-xxx']}`}
+                className={`${styles['input-xxx']} w-full h-full px-4 outline-none rounded-3xl`}
                 type="password"
                 placeholder="Mật khẩu"
                 value={passwordLogin}
@@ -134,23 +133,32 @@ const Login = () => {
             <input type="submit" value="Đăng nhập" className={`${styles.btn} solid`} required />
           </form>
 
-          <form className={styles['sign-up-form']} >
+          <form className={styles['sign-up-form']} onSubmit={handleSignUpSubmit}>
             <h2 className={styles.title}>Đăng ký</h2>
-            <div className={styles['input-field']}>
-              <i className="fas fa-user"></i>
+            <div className={`${styles['input-field']}`}>
               <input
-                className={`${styles['input-xxx']}`}
+                className={`${styles['input-xxx']} w-full h-full px-4 outline-none rounded-3xl`}
                 type="text"
-                placeholder="Tài khoản"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Họ"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+            <div className={`${styles['input-field']}`}>
+              <input
+                className={`${styles['input-xxx']} w-full h-full px-4 outline-none rounded-3xl`}
+                type="text"
+                placeholder="Tên"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 required
               />
             </div>
             <div className={styles['input-field']}>
               <i className="fas fa-envelope"></i>
               <input
-                className={`${styles['input-xxx']}`}
+                className={`${styles['input-xxx']} w-full h-full px-4 outline-none rounded-3xl`}
                 type="email"
                 placeholder="Email"
                 value={email}
@@ -161,7 +169,7 @@ const Login = () => {
             <div className={styles['input-field']}>
               <i className="fas fa-lock"></i>
               <input
-                className={`${styles['input-xxx']}`}
+                className={`${styles['input-xxx']} w-full h-full px-4 outline-none rounded-3xl`}
                 type="password"
                 placeholder="Mật khẩu"
                 value={password}
@@ -176,7 +184,7 @@ const Login = () => {
       <div className={styles['panels-container']}>
         <div className={`${styles.panel} ${styles['left-panel']} ${isSignUpMode ? styles['sign-up-mode'] : ''}`}>
           <div className={styles.content}>
-            <h3>Event Organization</h3>
+            <h3>Hưng Thịnh</h3>
             <p>Đăng ký sự kiện một cách đơn giản và hiệu quả với website của chúng tôi!</p>
             <button className={`${styles.btn} ${styles.transparent}`} id="sign-up-btn" onClick={handleSignUp}>Tạo mới</button>
           </div>
@@ -184,7 +192,7 @@ const Login = () => {
 
         <div className={`${styles.panel} ${styles['right-panel']} ${isSignUpMode ? styles['sign-up-mode'] : ''}`}>
           <div className={styles.content}>
-            <h3>Event Organization</h3>
+            <h3>Hưng Thịnh</h3>
             <p>Hãy trải nghiệm việc đăng ký sự kiện dễ dàng và nhanh chóng trên trang web của chúng tôi!</p>
             <button className={`${styles.btn} ${styles.transparent}`} id="sign-in-btn" onClick={handleSignIn}>Đăng nhập</button>
           </div>
