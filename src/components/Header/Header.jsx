@@ -1,15 +1,30 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Logo from '../../assets/hungthinh-logo.png'
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Logo from '../../assets/hungthinh-logo.png';
+
 function Header() {
-    return ( 
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        setIsLoggedIn(!!token); // Chuyển đổi token thành boolean
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('accessToken');
+        setIsLoggedIn(false);
+        navigate('/login');
+    };
+
+    return (
         <div>
             <header className="bg-header">
                 <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
                     <div className="flex lg:flex-1">
                         <Link to="/" className="-m-1.5">
                             <span className="sr-only">Your Event</span>
-                            <img className='w-8' src={Logo} alt="" />
+                            <img className="w-8" src={Logo} alt="" />
                         </Link>
                     </div>
                     <div className="flex lg:hidden">
@@ -27,7 +42,15 @@ function Header() {
                         <Link to="/history" className="text-lg font-semibold leading-6 text-white">Lịch sử</Link>
                     </div>
                     <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                        <Link to="/login" className="text-lg font-semibold leading-6 text-white">Đăng nhập <span aria-hidden="true">&rarr;</span></Link>
+                        {isLoggedIn ? (
+                            <button onClick={handleLogout} className="text-lg font-semibold leading-6 text-white">
+                                Đăng xuất <span aria-hidden="true">&rarr;</span>
+                            </button>
+                        ) : (
+                            <Link to="/login" className="text-lg font-semibold leading-6 text-white">
+                                Đăng nhập <span aria-hidden="true">&rarr;</span>
+                            </Link>
+                        )}
                     </div>
                 </nav>
 
@@ -37,7 +60,7 @@ function Header() {
                         <div className="flex items-center justify-between">
                             <Link to="/" className="-m-1.5 p-1.5">
                                 <span className="sr-only">Your Event</span>
-                                <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt=""/>
+                                <img className="h-8 w-auto" src={Logo} alt="" />
                             </Link>
                             <button type="button" className="-m-2.5 rounded-md p-2.5 text-gray-700">
                                 <span className="sr-only">Close menu</span>
@@ -49,19 +72,27 @@ function Header() {
                         <div className="mt-6 flow-root">
                             <div className="-my-6 divide-y divide-gray-500/10">
                                 <div className="space-y-2 py-6">
-                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-50">Trang chủ</Link>
-                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-50">Về chúng tôi</Link>
-                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-50">Sự kiện</Link>
-                                    <Link to="/history" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-50">Lịch sử</Link>
+                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Trang chủ</Link>
+                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Về chúng tôi</Link>
+                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Sự kiện</Link>
+                                    <Link to="/history" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Lịch sử</Link>
                                 </div>
                                 <div className="py-6">
-                                    <Link to="/login" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-gray-50">Đăng nhập</Link>
+                                    {isLoggedIn ? (
+                                        <button onClick={handleLogout} className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                            Đăng xuất
+                                        </button>
+                                    ) : (
+                                        <Link to="/login" className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                                            Đăng nhập
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </header>    
+            </header>
         </div>
     );
 }

@@ -1,13 +1,12 @@
 import axios from "axios";
 import config from "../constant/config";
-
+const URL_AUTH = "auth";
 const authApi = {
   register: async (userData) => {
     try {
       const response = await axios.post(
-        `${config.baseURL}auth/register`,
-        userData,
-        config
+        `${config.baseURL}${URL_AUTH}/register`,
+        userData
       );
       return response.data;
     } catch (error) {
@@ -19,9 +18,8 @@ const authApi = {
   login: async (loginData) => {
     try {
       const response = await axios.post(
-        `${config.baseURL}auth/login`,
-        loginData,
-        config
+        `${config.baseURL}${URL_AUTH}/login`,
+        loginData
       );
       return response.data;
     } catch (error) {

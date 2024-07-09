@@ -73,9 +73,6 @@ function Home() {
                         Chúng tôi cam kết không ngừng nỗ lực và sáng tạo để mỗi sự kiện của chúng tôi không chỉ đơn thuần là một hoạt động, mà còn là một tác phẩm nghệ thuật với sự kết hợp tinh tế giữa hương vị, thị giác và cảm xúc. Mỗi giọt nước hoa của Hưng Thịnh không chỉ là mùi hương, mà còn là một phần của nghệ thuật và cảm xúc.
                     </p>
                 </section>
-
-
-
                 <section className="my-16">
                     <h2 className="text-3xl font-bold text-center mb-8">Sự kiện nổi bật</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

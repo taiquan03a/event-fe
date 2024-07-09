@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styles from './login.module.css';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-// import path from '../../constant/path';
+import path from '../../constant/path';
 import authApi from '../../api/auth';
 const Login = () => {
     const [isSignUpMode, setIsSignUpMode] = useState(false);
@@ -12,7 +12,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [emailLogin, setEmailLogin] = useState('');
     const [passwordLogin, setPasswordLogin] = useState('');
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
   
     const handleSignUp = () => {
       setIsSignUpMode(true);
@@ -40,7 +40,7 @@ const Login = () => {
       try {
         const response = await authApi.register(newUser); // Replace authApi.createUser with your actual API call
         console.log('Signup Successful:', response);
-        if(response.success){
+        if(response.statusCode === 200){
             await Swal.fire({
                 icon: 'success',
                 text: response.message,
@@ -76,31 +76,39 @@ const Login = () => {
     const handleSignInSubmit = async (e) => {
       e.preventDefault();
       const userCredentials = {
-        email: emailLogin,
-        password: passwordLogin,
+          email: emailLogin,
+          password: passwordLogin,
       };
   
       try {
-        const response = await authApi.login(userCredentials); // Replace authApi.loginUser with your actual API call
-        console.log('Đăng nhập thành công:', response);
-        await Swal.fire({
-            icon: 'success',
-            text: response.message,
-            showConfirmButton: false,
-            timer: 1000,
-            timerProgressBar: false,
-        });
-        // navigate(path.home);
-        // window.location.reload();
+          const response = await authApi.login(userCredentials); // Thay authApi.loginUser bằng API thực tế của bạn
+          console.log('Đăng nhập thành công:', response);
+  
+          await Swal.fire({
+              icon: 'success',
+              text: 'Đăng nhập thành công',
+              showConfirmButton: false,
+              timer: 1000,
+              timerProgressBar: false,
+          });
+          localStorage.setItem('accessToken', response.accessToken);
+          if (response.roles[0] === 'ROLE_ADMINISTRATOR') {
+              navigate(path.manageUsers);
+          } else if (response.roles[0] === 'ROLE_USER') {
+              navigate(path.home);
+          } else {
+              console.error('Unknown role:', response.roles);
+          }
+  
       } catch (error) {
-        console.error('Login Error:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Đăng nhập không thành công!',
-          text: 'Vui lòng kiểm tra lại thông tin đăng nhập.',
-        });
+          console.error('Login Error:', error);
+          Swal.fire({
+              icon: 'error',
+              title: 'Đăng nhập không thành công!',
+              text: 'Vui lòng kiểm tra lại thông tin đăng nhập.',
+          });
       }
-    };
+  };
 
   return (
     <div className={`${styles.container} ${isSignUpMode ? styles['sign-up-mode'] : ''}`}>
