@@ -32,11 +32,14 @@ const userApi = {
       if (!accessToken) {
         throw new Error("Bạn cần đăng nhập để xem lịch sử đặt vé.");
       }
-      const response = await axios.get(`${config.baseURL}${URL_USER}/active`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.get(
+        `${config.baseURL}${URL_USER}/history/active`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       console.error("Error getting booking history:", error);
@@ -50,7 +53,7 @@ const userApi = {
         throw new Error("Bạn cần đăng nhập để xem lịch sử hủy vé.");
       }
       const response = await axios.get(
-        `${config.baseURL}${URL_USER}/noActive`,
+        `${config.baseURL}${URL_USER}/history/noActive`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -71,7 +74,6 @@ const userApi = {
       }
       const response = await axios.post(
         `${config.baseURL}${URL_USER}/add/${idEvent}`,
-        {},
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

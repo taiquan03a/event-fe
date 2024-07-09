@@ -1,34 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../../../components/SideBar/Sidebar';
-
-const initialUsers = [
-    { id: 1, firstName: 'John', lastName: 'Doe', email: 'john@example.com', password: 'password1' },
-    { id: 2, firstName: 'Jane', lastName: 'Smith', email: 'jane@example.com', password: 'password2' }
-];
+import adminApi from '../../../api/adminApi';
+import Swal from 'sweetalert2';
 
 function ManageUsers() {
-    const [users, setUsers] = useState(initialUsers);
-    const [editingUser, setEditingUser] = useState(null);
-    const [newUser, setNewUser] = useState({ id: '', firstName: '', lastName: '', email: '', password: '' });
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [users, setUsers] = useState([]);
 
-    const handleAddUser = () => {
-        setUsers([...users, { ...newUser, id: users.length + 1 }]);
-        setNewUser({ id: '', firstName: '', lastName: '', email: '', password: '' });
-        setShowAddModal(false);
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const userData = await adminApi.getAllUser();
+                setUsers(userData);
+            } catch (error) {
+                console.error('Lỗi khi lấy danh sách người dùng:', error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    const handleUserAction = async (id) => {
+        try {
+            await adminApi.activeUser(id); // Gọi API active/deactivate người dùng
+            // Cập nhật lại trạng thái của người dùng trong state
+            setUsers(users.map(user => {
+                if (user.id === id) {
+                    return { ...user, active: !user.active }; // Đảo ngược trạng thái active
+                }
+                return user;
+            }));
+        } catch (error) {
+            console.error('Lỗi khi thực hiện hành động người dùng:', error);
+        }
     };
 
-    const handleEditUser = () => {
-        setUsers(users.map(user => (user.id === editingUser.id ? editingUser : user)));
-        setEditingUser(null);
-        setShowEditModal(false);
-    };
+    const confirmAction = async (id, action) => {
+        const result = await Swal.fire({
+            title: action === 'delete' ? 'Xóa người dùng' : 'Kích hoạt người dùng',
+            text: action === 'delete' ? 'Bạn có chắc muốn xóa người dùng này?' : 'Bạn có chắc muốn kích hoạt người dùng này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy',
+        });
 
-    const handleDeleteUser = (id) => {
-        setUsers(users.filter(user => user.id !== id));
+        if (result.isConfirmed) {
+            handleUserAction(id);
+        }
     };
 
     return (
@@ -36,18 +58,16 @@ function ManageUsers() {
             <Sidebar />
             <div className="flex-1 p-4">
                 <div className="p-10">
-                    <h2 className="text-2xl font-bold mb-5">Manage Users</h2>
-                    <button onClick={() => setShowAddModal(true)} className="bg-header text-white px-4 py-2 rounded mb-5 hover:bg-btnHover">
-                        Add User
-                    </button>
+                    <h2 className="text-2xl font-bold mb-5">Quản lý Người dùng</h2>
                     <table className="min-w-full text-center">
                         <thead>
                             <tr>
                                 <th className="py-2 px-4 border-b">ID</th>
-                                <th className="py-2 px-4 border-b">First Name</th>
-                                <th className="py-2 px-4 border-b">Last Name</th>
+                                <th className="py-2 px-4 border-b">Họ</th>
+                                <th className="py-2 px-4 border-b">Tên</th>
                                 <th className="py-2 px-4 border-b">Email</th>
-                                <th className="py-2 px-4 border-b">Actions</th>
+                                <th className="py-2 px-4 border-b">Trạng thái</th>
+                                <th className="py-2 px-4 border-b">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,100 +77,27 @@ function ManageUsers() {
                                     <td className="py-2 px-4 border-b">{user.firstName}</td>
                                     <td className="py-2 px-4 border-b">{user.lastName}</td>
                                     <td className="py-2 px-4 border-b">{user.email}</td>
+                                    <td className="py-2 px-4 border-b">{user.active ? 'Hoạt động' : 'Không hoạt động'}</td>
                                     <td className="py-2 px-4 border-b">
-                                        <button onClick={() => { setEditingUser(user); setShowEditModal(true); }} className="text-blue-600 hover:underline mr-2">
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </button>
-                                        <button onClick={() => handleDeleteUser(user.id)} className="text-red-600 hover:underline">
-                                            <FontAwesomeIcon icon={faTrash} />
-                                        </button>
+                                        {user.active ? (
+                                            <>
+                                                <button onClick={() => confirmAction(user.id, 'delete')} className="text-gray-600 hover:underline">
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button onClick={() => confirmAction(user.id, 'activate')} className="text-green-600 hover:underline">
+                                                    <FontAwesomeIcon icon={faCheck} />
+                                                </button>
+                                            </>
+                                        )}
                                     </td>
+
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-
-                    {/* Add User Modal */}
-                    {showAddModal && (
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <div className="bg-white p-6 rounded shadow-lg max-w-xl">
-                                <h3 className="text-xl font-semibold mb-3 text-header">Add User</h3>
-                                <input
-                                    type="text"
-                                    placeholder="First Name"
-                                    value={newUser.firstName}
-                                    onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Last Name"
-                                    value={newUser.lastName}
-                                    onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                />
-                                <input
-                                    type="email"
-                                    placeholder="Email"
-                                    value={newUser.email}
-                                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                />
-                                <input
-                                    type="password"
-                                    placeholder="Password"
-                                    value={newUser.password}
-                                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                />
-                                <div className="flex justify-end">
-                                    <button onClick={() => setShowAddModal(false)} className="bg-red-700 hover:bg-red-900 text-white px-4 py-2 rounded mr-2">Cancel</button>
-                                    <button onClick={handleAddUser} className="bg-header hover:bg-btnHover text-white px-4 py-2 rounded">Add</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Edit User Modal */}
-                    {showEditModal && (
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
-                            <div className="bg-white p-6 rounded shadow-lg max-w-xl">
-                                <h3 className="text-xl text-header font-semibold mb-3">Edit User</h3>
-                                <input
-                                    type="text"
-                                    placeholder="First Name"
-                                    value={editingUser.firstName}
-                                    onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Last Name"
-                                    value={editingUser.lastName}
-                                    onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                />
-                                <input
-                                    type="email"
-                                    placeholder="Email"
-                                    value={editingUser.email}
-                                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                />
-                                <input
-                                    type="password"
-                                    placeholder="Password"
-                                    value={editingUser.password}
-                                    onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                />
-                                <div className="flex justify-end">
-                                    <button onClick={() => setShowEditModal(false)} className="bg-red-700 hover:bg-red-900 text-white px-4 py-2 rounded mr-2">Cancel</button>
-                                    <button onClick={handleEditUser} className="bg-header hover:bg-btnHover text-white px-4 py-2 rounded">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

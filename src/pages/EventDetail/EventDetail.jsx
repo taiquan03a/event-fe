@@ -20,7 +20,7 @@ function EventDetail() {
                 const accessToken = localStorage.getItem('accessToken');
                 if (accessToken) {
                     const bookingHistory = await userApi.getCancelHistory();
-                    const isEventRegistered = bookingHistory.some(item => item.id === id);
+                    const isEventRegistered = bookingHistory.some(item => String(item.id) === id);
                     setIsRegistered(isEventRegistered);
                 }
             } catch (error) {
@@ -37,31 +37,38 @@ function EventDetail() {
             if (!accessToken) {
                 throw new Error('Bạn cần đăng nhập để đăng ký sự kiện.');
             }
-
+    
             // Gọi API đăng ký sự kiện
-            await userApi.eventRegister(id, accessToken);
-
-            // Cập nhật trạng thái đã đăng ký
-            setIsRegistered(true);
-
-            // Hiển thị thông báo thành công
-            Swal.fire({
-                icon: 'success',
-                title: 'Đăng ký thành công!',
-                showConfirmButton: false,
-                timer: 1500
-            });
+            const response = await userApi.eventRegister(id);
+            console.log(response);
+            // Kiểm tra response từ API
+            // if (response) {
+            //     // Cập nhật trạng thái đã đăng ký
+            //     setIsRegistered(true);
+    
+            //     // Hiển thị thông báo thành công
+            //     Swal.fire({
+            //         icon: 'success',
+            //         title: 'Đăng ký thành công!',
+            //         showConfirmButton: false,
+            //         timer: 1500
+            //     });
+            // } else {
+            //     // Xử lý khi đăng ký không thành công
+            //     throw new Error( 'Đăng ký không thành công.');
+            // }
         } catch (error) {
             console.error('Error registering for event:', error);
-
+    
             // Hiển thị thông báo lỗi
             Swal.fire({
                 icon: 'error',
                 title: 'Đăng ký không thành công',
-                text: error.message
+                text:  'Đã xảy ra lỗi khi đăng ký sự kiện.'
             });
         }
     };
+    
 
     if (!event) {
         return <p>Loading...</p>; // Hoặc bạn có thể hiển thị một spinner
@@ -83,7 +90,7 @@ function EventDetail() {
                         <p><strong>Số lượng hiện tại:</strong> {event.quantityCurrent}</p>
                         <p><strong>Mô tả:</strong> {event.description}</p>
                         {isRegistered ? (
-                            <button className="bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed" disabled>
+                            <button className="bg-header hover:bg-btnHover text-white font-bold py-2 px-4 rounded cursor-not-allowed" disabled>
                                 Đã đăng ký
                             </button>
                         ) : (

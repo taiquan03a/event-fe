@@ -6,15 +6,13 @@ const HistoryItem = ({ event, onCancel }) => {
       <img  src={event.image} alt="" />
       <div className="border-r w-full border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-6 flex flex-col justify-between leading-normal">
         <div className="mb-8">
-          <div className="text-gray-900 font-bold text-2xl mb-4">{event.title}</div>
+          <div className="text-gray-900 font-bold text-2xl mb-4">{event.name}</div>
           <p className="text-gray-700 text-base mb-2">Địa điểm: {event.location}</p>
-          <p className="text-gray-700 text-base mb-2">Ngày bắt đầu: {event.startDate}</p>
-          <p className="text-gray-700 text-base mb-2">Ngày kết thúc: {event.endDate}</p>
+          <p className="text-gray-700 text-base mb-2">Ngày bắt đầu: {event.begin}</p>
         </div>
         <div className="flex items-center justify-between">
           <div className="text-sm">
-            <p className="text-gray-900 leading-none">Người đăng ký: {event.registrant}</p>
-            <p className="text-gray-600">Ngày đăng ký: {event.registrationDate}</p>
+            <p className="text-gray-600">Ngày đăng ký: {event.registerTime}</p>
           </div>
           <button 
             onClick={() => onCancel(event.id)} 
