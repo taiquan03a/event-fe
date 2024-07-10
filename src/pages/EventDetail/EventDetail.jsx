@@ -80,7 +80,7 @@ function EventDetail() {
             <div className="container mx-auto max-w-7xl p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-gray-500 p-5 rounded-3xl">
                     <div className="lg:col-span-1">
-                        <img src={event.image} alt={event.name} className="w-full rounded-lg shadow-lg h-full"/>
+                        <img src={`data:image/jpeg;base64,${event.image}`} alt={event.name} className="w-full rounded-lg shadow-lg h-full"/>
                     </div>
                     <div className="lg:col-span-1 flex flex-col justify-between p-6 rounded-lg space-y-4">
                         <h1 className="text-3xl font-bold">{event.name}</h1>

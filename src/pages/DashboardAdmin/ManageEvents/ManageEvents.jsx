@@ -416,7 +416,6 @@ const ManageEvents = () => {
                                 <input
                                     type="text"
                                     placeholder="Tên"
-                                    value={newEvent.name}
                                     onChange={(e) => setNewEvent({ ...newEvent, name: e.target.value })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
@@ -424,7 +423,6 @@ const ManageEvents = () => {
                                 <input
                                     type="date"
                                     placeholder="Thời gian bắt đầu"
-                                    value={newEvent.begin}
                                     onChange={(e) => setNewEvent({ ...newEvent, begin: e.target.value })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
@@ -432,13 +430,11 @@ const ManageEvents = () => {
                                 <input
                                     type="date"
                                     placeholder="Thời gian kết thúc"
-                                    value={newEvent.end}
                                     onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
                                 />
                                 <select
-                                    value={newEvent.province}
                                     onChange={(e) => {
                                         setNewEvent({ ...newEvent, province: e.target.value });
                                         handleProvinceChange(e.target.value);
@@ -447,12 +443,15 @@ const ManageEvents = () => {
                                     required
                                 >
                                     <option value="">Chọn tỉnh/thành phố</option>
-                                    {provinces.map((province, index) => (
-                                        <option key={index} value={province.id}>{province.full_name}</option>
-                                    ))}
+                                    {provinces.map((province, index)=>{
+                                        return(
+                                            <option key={index} value={province.id}>{province.full_name}</option>
+                                        )
+                                    }
+                                              
+                                )}
                                 </select>
                                 <select
-                                    value={newEvent.district}
                                     onChange={(e) => {
                                         setNewEvent({ ...newEvent, district: e.target.value });
                                         handleDistrictChange(e.target.value);
@@ -462,32 +461,35 @@ const ManageEvents = () => {
                                     disabled={districts.length === 0} // Disable select until districts are loaded
                                 >
                                     <option value="">Chọn huyện/quận</option>
-                                    {districts.map((district, index) => (
-                                        <option key={index} value={district.id}>{district.full_name}</option>
-                                    ))}
+                                    {districts.map((district, index) =>{
+                                        return (
+                                            <option key={index} value={district.id}>{district.full_name}</option>
+                                        )
+                                    } )}
                                 </select>
                                 <select
-                                    value={newEvent.ward}
                                     onChange={(e) => setNewEvent({ ...newEvent, ward: e.target.value })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
                                     disabled={communes.length === 0} // Disable select until communes are loaded
                                 >
                                     <option value="">Chọn xã/phường</option>
-                                    {communes.map((commune, index) => (
-                                        <option key={index} value={commune.id}>{commune.full_name}</option>
-                                    ))}
+                                    {communes.map((commune, index) =>{
+                                        return (
+                                            <option key={index} value={commune.id}>{commune.full_name}</option>
+                                        )
+                                    } 
+                                        
+                                    )}
                                 </select>
                                 <input
                                     type="text"
                                     placeholder="Số nhà"
-                                    value={newEvent.detail}
                                     onChange={(e) => setNewEvent({ ...newEvent, detail: e.target.value })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
                                 />
                                 <select
-                                    value={newEvent.supplierId}
                                     onChange={(e) => {
                                         setNewEvent({ ...newEvent, supplierId: e.target.value });
                                     }}
@@ -495,9 +497,11 @@ const ManageEvents = () => {
                                     required
                                 >
                                     <option value="">Chọn nhà cung cấp</option>
-                                    {supliers.map((suplier, index) => (
-                                        <option key={index} value={suplier.id}>{suplier.name}</option>
-                                    ))}
+                                    {supliers.map((suplier, index) => {
+                                        return(
+                                            <option key={index} value={suplier.id}>{suplier.name}</option>
+                                        )
+                                    })}
                                 </select>
                                 <input
                                     type="file"
@@ -511,7 +515,6 @@ const ManageEvents = () => {
                                 )}
                                 <textarea
                                     placeholder="Mô tả"
-                                    value={newEvent.description}
                                     onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
@@ -519,7 +522,6 @@ const ManageEvents = () => {
                                 <input
                                     type="number"
                                     placeholder="Số lượng"
-                                    value={newEvent.quantity}
                                     onChange={(e) => setNewEvent({ ...newEvent, quantity: parseInt(e.target.value) })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
