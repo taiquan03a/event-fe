@@ -112,13 +112,14 @@ const ManageEvents = () => {
             setEvents(events.map(event => (event.id === editingEvent.id ? editingEvent : event)));
             setEditingEvent(null);
             setShowEditModal(false);
-            Swal.fire({
+            await Swal.fire({
                 icon: 'success',
                 title: 'Chỉnh sửa thành công!',
                 text: 'Sự kiện đã được chỉnh sửa thành công.',
                 showConfirmButton: false,
                 timer: 1500
             });
+            window.location.reload()
         } catch (error) {
             console.error('Error editing event:', error);
         }
@@ -435,14 +436,6 @@ const ManageEvents = () => {
                                 placeholder="Trạng thái"
                                 value={editingEvent.active}
                                 onChange={(e) => setEditingEvent({ ...editingEvent, active: e.target.value })}
-                                className="border rounded px-2 py-1 mb-3 w-full"
-                                required
-                            />
-                            <input
-                                type="text"
-                                placeholder="Ngày tạo"
-                                value={editingEvent.createdAt}
-                                onChange={(e) => setEditingEvent({ ...editingEvent, createdAt: e.target.value })}
                                 className="border rounded px-2 py-1 mb-3 w-full"
                                 required
                             />
