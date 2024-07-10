@@ -388,7 +388,13 @@ const ManageEvents = () => {
                                     type="text"
                                     placeholder="Số nhà"
                                     value={editingEvent.location.detail}
-                                    onChange={(e) => setEditingEvent({ ...editingEvent, detail: e.target.value })}
+                                    onChange={(e) => setEditingEvent({
+                                        ...editingEvent,
+                                        location: {
+                                            ...editingEvent.location,
+                                            detail: e.target.value
+                                        }
+                                    })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
                                 />
@@ -475,7 +481,7 @@ const ManageEvents = () => {
                                     required
                                 />
                                 <select
-                                    value={newEvent.province.name}
+                                    value={newEvent.province}
                                     onChange={(e) => {
                                         const selectedProvinceId = e.target.selectedOptions[0].getAttribute('data-id');
                                         const selectedProvinceName = e.target.value;
@@ -494,7 +500,7 @@ const ManageEvents = () => {
                                 </select>
 
                                 <select
-                                    value={newEvent.district.name}
+                                    value={newEvent.district}
                                     onChange={(e) => {
                                         const selectedDistrictId = e.target.selectedOptions[0].getAttribute('data-id');
                                         const selectedDistrictName = e.target.value;
@@ -513,7 +519,7 @@ const ManageEvents = () => {
                                 </select>
 
                                 <select
-                                    value={newEvent.ward.name}
+                                    value={newEvent.ward}
                                     onChange={(e) => {
                                         // const selectedWardId = e.target.selectedOptions[0].getAttribute('data-id');
                                         // console.log();
