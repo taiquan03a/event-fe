@@ -244,7 +244,7 @@ const ManageEvents = () => {
                                         <td className="py-4 px-6 whitespace-nowrap">{event.end}</td>
                                         <td className="py-4 px-6 whitespace-nowrap">{event.location}</td>
                                         <td className="py-4 px-6">
-                                            <img src={event.image} alt={event.name} className="h-10 w-10 object-cover rounded-full" />
+                                            <img src={`data:image/jpeg;base64,${event.image}`} alt={event.name} className="h-10 w-10 object-cover rounded-full" />
                                         </td>
                                         <td className="py-4 px-6">{event.description}</td>
                                         <td className="py-4 px-6">{event.quantity}</td>
