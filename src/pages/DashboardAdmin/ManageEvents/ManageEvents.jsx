@@ -414,7 +414,7 @@ const ManageEvents = () => {
                                     accept=".png,.jpg,.jpeg"
                                 />
                                 {previewImageEdit && (
-                                    <img src={previewImageEdit} alt="Preview" className="mt-2 mb-4 w-auto h-40 rounded" />
+                                    <img src={previewImageEdit} alt="Preview" className="mt-2 mb-4 w-auto h-40 rounded mx-auto" />
                                 )}
                             <textarea
                                 placeholder="Mô tả"
@@ -560,7 +560,7 @@ const ManageEvents = () => {
                                     required
                                 />
                                 {previewImage && (
-                                    <img src={previewImage} alt="Preview" className="mt-2 mb-4 w-auto h-40 rounded" />
+                                    <img src={previewImage} alt="Preview" className="mt-2 mb-4 w-auto h-40 rounded mx-auto" />
                                 )}
                                 <textarea
                                     placeholder="Mô tả"
