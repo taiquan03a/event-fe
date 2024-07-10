@@ -410,6 +410,7 @@ const ManageEvents = () => {
                                     onChange={handleImageChangeEdit}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
+                                    accept=".png,.jpg,.jpeg"
                                 />
                                 {previewImageEdit && (
                                     <img src={previewImageEdit} alt="Preview" className="mt-2 mb-4 w-auto h-40 rounded" />
@@ -562,6 +563,7 @@ const ManageEvents = () => {
                                     placeholder="Hình ảnh"
                                     onChange={handleImageChange}
                                     className="border rounded px-2 py-1 mb-3 w-full"
+                                    accept=".png,.jpg,.jpeg"
                                     required
                                 />
                                 {previewImage && (
