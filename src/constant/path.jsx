@@ -2,13 +2,13 @@
 const path = {
     home: '/',
     login: '/login',
-    dashboardAdmin: '/dashboard-admin',
     about: '/about',
     events: '/events',
     eventDetail: (id)=> `/events/${id}`,
+    bookingHistory: '/booking-history',
     manageUsers: '/manage-users',
-    manageEvents: 'manage-events',
-    bookingHistory: 'booking-history',
+    manageEvents: '/manage-events',
+    manageSuplier: '/manage-suplier',
 };
 
 export default path;

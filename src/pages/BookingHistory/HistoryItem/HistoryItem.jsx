@@ -27,4 +27,3 @@ const HistoryItem = ({ event, onCancel }) => {
 };
 
 export default HistoryItem;
-    

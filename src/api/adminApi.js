@@ -2,10 +2,10 @@ import axios from "axios";
 import config from "../constant/config";
 
 const URL_Admin = "admin";
-let accessToken = localStorage.getItem("accessToken");
 
 const adminApi = {
   getAllUser: async () => {
+    let accessToken = localStorage.getItem("accessToken");
     try {
       const response = await axios.get(
         `${config.baseURL}${URL_Admin}/user/all`,
@@ -23,6 +23,7 @@ const adminApi = {
   },
 
   activeUser: async (userId) => {
+    let accessToken = localStorage.getItem("accessToken");
     try {
       const response = await axios.post(
         `${config.baseURL}${URL_Admin}/user/delete/${userId}`,
@@ -41,6 +42,7 @@ const adminApi = {
   },
 
   getAllEvent: async () => {
+    let accessToken = localStorage.getItem("accessToken");
     try {
       const response = await axios.get(
         `${config.baseURL}${URL_Admin}/event/all`,
@@ -58,12 +60,28 @@ const adminApi = {
   },
 
   createEvent: async (eventData) => {
+    let accessToken = localStorage.getItem("accessToken");
+    // Tạo đối tượng FormData
+    const formData = new FormData();
+    formData.append("image", eventData.image);
+    formData.append("name", eventData.name);
+    formData.append("begin", eventData.begin);
+    formData.append("end", eventData.end);
+    formData.append("description", eventData.description);
+    formData.append("quantity", eventData.quantity);
+    formData.append("province", eventData.province);
+    formData.append("district", eventData.district);
+    formData.append("ward", eventData.ward);
+    formData.append("detail", eventData.detail);
+    formData.append("supplierId", eventData.supplierId);
+
     try {
       const response = await axios.post(
         `${config.baseURL}${URL_Admin}/event/create`,
-        eventData,
+        formData,
         {
           headers: {
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${accessToken}`,
           },
         }
@@ -76,6 +94,7 @@ const adminApi = {
   },
 
   editEvent: async (eventId, eventData) => {
+    let accessToken = localStorage.getItem("accessToken");
     try {
       const response = await axios.put(
         `${config.baseURL}${URL_Admin}/event/update/${eventId}`,
@@ -92,10 +111,13 @@ const adminApi = {
       throw error;
     }
   },
+
   activeEvent: async (eventId) => {
+    let accessToken = localStorage.getItem("accessToken");
     try {
       const response = await axios.post(
         `${config.baseURL}${URL_Admin}/event/delete/${eventId}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -104,7 +126,81 @@ const adminApi = {
       );
       return response.data;
     } catch (error) {
-      console.error(`Error deleting event ${eventId}:`, error);
+      console.error(`Error active event ${eventId}:`, error);
+      throw error;
+    }
+  },
+  getAllSuplier: async () => {
+    let accessToken = localStorage.getItem("accessToken");
+    try {
+      const response = await axios.get(
+        `${config.baseURL}${URL_Admin}/supplier/all`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error getting all suppliers:", error);
+      throw error;
+    }
+  },
+
+  createSuplier: async (suplierData) => {
+    let accessToken = localStorage.getItem("accessToken");
+    try {
+      const response = await axios.post(
+        `${config.baseURL}${URL_Admin}/supplier/create`,
+        suplierData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating supplier:", error);
+      throw error;
+    }
+  },
+
+  editSuplier: async (suplierId, suplierData) => {
+    let accessToken = localStorage.getItem("accessToken");
+    try {
+      const response = await axios.put(
+        `${config.baseURL}${URL_Admin}/supplier/edit/${suplierId}`,
+        suplierData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error editing supplier ${suplierId}:`, error);
+      throw error;
+    }
+  },
+
+  activeSuplier: async (suplierId) => {
+    let accessToken = localStorage.getItem("accessToken");
+    try {
+      const response = await axios.post(
+        `${config.baseURL}${URL_Admin}/supplier/active/${suplierId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error active supplier ${suplierId}:`, error);
       throw error;
     }
   },

@@ -91,7 +91,20 @@ const Login = () => {
               timer: 1000,
               timerProgressBar: false,
           });
+  
+          // Kiểm tra và xóa accessToken và role cũ nếu có
+          if (localStorage.getItem('accessToken')) {
+              localStorage.removeItem('accessToken');
+          }
+          if (localStorage.getItem('role')) {
+              localStorage.removeItem('role');
+          }
+  
+          // Lưu accessToken và role mới
           localStorage.setItem('accessToken', response.accessToken);
+          localStorage.setItem('role', response.roles[0]);
+  
+          // Điều hướng dựa trên vai trò người dùng
           if (response.roles[0] === 'ROLE_ADMINISTRATOR') {
               navigate(path.manageUsers);
           } else if (response.roles[0] === 'ROLE_USER') {
@@ -109,7 +122,8 @@ const Login = () => {
           });
       }
   };
-
+  
+  
   return (
     <div className={`${styles.container} ${isSignUpMode ? styles['sign-up-mode'] : ''}`}>
       <div className={styles['forms-container']}>

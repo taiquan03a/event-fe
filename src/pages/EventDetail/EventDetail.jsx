@@ -19,7 +19,7 @@ function EventDetail() {
                 // Kiểm tra xem người dùng đã đăng ký sự kiện này chưa
                 const accessToken = localStorage.getItem('accessToken');
                 if (accessToken) {
-                    const bookingHistory = await userApi.getCancelHistory();
+                    const bookingHistory = await userApi.getBookingHistory();
                     const isEventRegistered = bookingHistory.some(item => String(item.id) === id);
                     setIsRegistered(isEventRegistered);
                 }
@@ -31,32 +31,32 @@ function EventDetail() {
         fetchEventDetail();
     }, [id]); // Thêm id vào dependencies của useEffect
 
+    console.log(isRegistered);
     const handleEventRegistration = async () => {
         try {
             const accessToken = localStorage.getItem('accessToken');
             if (!accessToken) {
                 throw new Error('Bạn cần đăng nhập để đăng ký sự kiện.');
             }
-    
             // Gọi API đăng ký sự kiện
             const response = await userApi.eventRegister(id);
             console.log(response);
             // Kiểm tra response từ API
-            // if (response) {
-            //     // Cập nhật trạng thái đã đăng ký
-            //     setIsRegistered(true);
+            if (response) {
+                // Cập nhật trạng thái đã đăng ký
+                setIsRegistered(true);
     
-            //     // Hiển thị thông báo thành công
-            //     Swal.fire({
-            //         icon: 'success',
-            //         title: 'Đăng ký thành công!',
-            //         showConfirmButton: false,
-            //         timer: 1500
-            //     });
-            // } else {
-            //     // Xử lý khi đăng ký không thành công
-            //     throw new Error( 'Đăng ký không thành công.');
-            // }
+                // Hiển thị thông báo thành công
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đăng ký thành công!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                // Xử lý khi đăng ký không thành công
+                throw new Error( 'Đăng ký không thành công.');
+            }
         } catch (error) {
             console.error('Error registering for event:', error);
     

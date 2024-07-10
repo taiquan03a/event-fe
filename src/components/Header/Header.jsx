@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import Logo from '../../assets/hungthinh-logo.png';
+import path from '../../constant/path';
 
 function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -13,8 +15,21 @@ function Header() {
 
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('role');
         setIsLoggedIn(false);
         navigate('/login');
+    };
+
+    const handleBookingHistoryClick = (e) => {
+        if (!isLoggedIn) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thông báo',
+                text: 'Bạn cần đăng nhập để xem lịch sử đặt chỗ.',
+                confirmButtonText: 'OK'
+            });
+        }
     };
 
     return (
@@ -36,10 +51,10 @@ function Header() {
                         </button>
                     </div>
                     <div className="hidden lg:flex lg:gap-x-12">
-                        <Link to="/" className="text-lg font-semibold leading-6 text-white">Trang chủ</Link>
-                        <Link to="/" className="text-lg font-semibold leading-6 text-white">Về chúng tôi</Link>
-                        <Link to="/" className="text-lg font-semibold leading-6 text-white">Sự kiện</Link>
-                        <Link to="/history" className="text-lg font-semibold leading-6 text-white">Lịch sử</Link>
+                        <Link to={path.home} className="text-lg font-semibold leading-6 text-white">Trang chủ</Link>
+                        <Link to={path.about} className="text-lg font-semibold leading-6 text-white">Về chúng tôi</Link>
+                        <Link to={path.events} className="text-lg font-semibold leading-6 text-white">Sự kiện</Link>
+                        <Link to={path.bookingHistory} onClick={handleBookingHistoryClick} className="text-lg font-semibold leading-6 text-white">Lịch sử</Link>
                     </div>
                     <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                         {isLoggedIn ? (
@@ -72,10 +87,10 @@ function Header() {
                         <div className="mt-6 flow-root">
                             <div className="-my-6 divide-y divide-gray-500/10">
                                 <div className="space-y-2 py-6">
-                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Trang chủ</Link>
-                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Về chúng tôi</Link>
-                                    <Link to="/" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Sự kiện</Link>
-                                    <Link to="/history" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Lịch sử</Link>
+                                    <Link to={path.home} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Trang chủ</Link>
+                                    <Link to={path.about} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Về chúng tôi</Link>
+                                    <Link to={path.events} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Sự kiện</Link>
+                                    <Link to={path.bookingHistory} onClick={handleBookingHistoryClick} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Lịch sử</Link>
                                 </div>
                                 <div className="py-6">
                                     {isLoggedIn ? (

@@ -81,7 +81,7 @@ function ManageUsers() {
                                     <td className="py-2 px-4 border-b">
                                         {user.active ? (
                                             <>
-                                                <button onClick={() => confirmAction(user.id, 'delete')} className="text-gray-600 hover:underline">
+                                                <button onClick={() => confirmAction(user.id, 'delete')} className="text-red-500 hover:underline">
                                                     <FontAwesomeIcon icon={faTrash} />
                                                 </button>
                                             </>

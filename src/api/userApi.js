@@ -2,7 +2,6 @@ import axios from "axios";
 import config from "../constant/config";
 
 const URL_USER = "user";
-let accessToken = localStorage.getItem("accessToken");
 
 const userApi = {
   getAllEvents: async () => {
@@ -28,6 +27,7 @@ const userApi = {
   },
 
   getBookingHistory: async () => {
+    const accessToken = localStorage.getItem("accessToken");
     try {
       if (!accessToken) {
         throw new Error("Bạn cần đăng nhập để xem lịch sử đặt vé.");
@@ -48,6 +48,7 @@ const userApi = {
   },
 
   getCancelHistory: async () => {
+    const accessToken = localStorage.getItem("accessToken");
     try {
       if (!accessToken) {
         throw new Error("Bạn cần đăng nhập để xem lịch sử hủy vé.");
@@ -68,12 +69,14 @@ const userApi = {
   },
 
   eventRegister: async (idEvent) => {
+    const accessToken = localStorage.getItem("accessToken");
     try {
       if (!accessToken) {
         throw new Error("Bạn cần đăng nhập để đăng ký sự kiện.");
       }
       const response = await axios.post(
         `${config.baseURL}${URL_USER}/add/${idEvent}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -88,6 +91,7 @@ const userApi = {
   },
 
   cancelEvent: async (idEvent) => {
+    const accessToken = localStorage.getItem("accessToken");
     try {
       if (!accessToken) {
         throw new Error("Bạn cần đăng nhập để hủy sự kiện.");
