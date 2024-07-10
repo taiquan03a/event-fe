@@ -73,12 +73,12 @@ const SliderEvent = () => {
             {events.map(event => (
                 <div key={event.id} className="p-4">
                     <Link to={`/events/${event.id}`}>
-                        <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                            <img src={event.image} alt={event.name} className="w-full h-64 object-cover" />
+                        <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg h-full">
+                            <img src={`data:image/jpeg;base64,${event.image}`} alt={event.name} className="w-full h-64 object-cover" />
                             <div className="p-4">
                                 <h3 className="text-xl font-bold text-white">{event.name}</h3>
                                 <p className="text-white">{formatEventDate(event.begin)}</p>
-                                <p className="text-white">{event.location}</p>
+                                <p className="text-white text-nowrap">{event.location.detail}-{event.location.ward}-{event.location.district}-{event.location.province}</p>
                             </div>
                         </div>
                     </Link>

@@ -85,7 +85,7 @@ function EventDetail() {
                     <div className="lg:col-span-1 flex flex-col justify-between p-6 rounded-lg space-y-4">
                         <h1 className="text-3xl font-bold">{event.name}</h1>
                         <p><strong>Ngày bắt đầu:</strong> {event.begin}</p>
-                        <p><strong>Địa điểm:</strong> {event.location}</p>
+                        <p className='text-wrap'><strong>Địa điểm:</strong> {event.location.detail}-{event.location.ward}-{event.location.district}-{event.location.province}</p>
                         <p><strong>Số lượng tối đa:</strong> {event.quantityMax}</p>
                         <p><strong>Số lượng hiện tại:</strong> {event.quantityCurrent}</p>
                         <p><strong>Mô tả:</strong> {event.description}</p>

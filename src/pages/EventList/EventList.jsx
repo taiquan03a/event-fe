@@ -35,7 +35,7 @@ const EventList = () => {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
-
+    console.log(events);
     return (
         <div className='min-h-screen flex flex-col justify-between'>
             <Header />

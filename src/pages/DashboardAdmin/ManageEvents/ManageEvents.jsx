@@ -11,6 +11,7 @@ const ManageEvents = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
+    const [previewImageEdit, setPreviewImageEdit] = useState(null);
     const [provinces, setProvinces] = useState([]);
     const [supliers, setSuppliers] = useState([]);
     const [districts, setDistricts] = useState([]);
@@ -47,7 +48,6 @@ const ManageEvents = () => {
         const fetchProvinces = async () => {
             try {
                 const data = await locationApi.getProvince();
-                console.log(data);
                 setProvinces(data.data);
             } catch (error) {
                 console.error('Error fetching provinces:', error);
@@ -57,16 +57,17 @@ const ManageEvents = () => {
         fetchProvinces();
     }, []);
     useEffect(() => {
-        const fetchProvinces = async () => {
+        const fetchSuppliers = async () => {
             try {
-                const data = await adminApi.getAllSuplier();
+                const data = await adminApi.getAllSuplierActive();
+                console.log("data", data);
                 setSuppliers(data);
             } catch (error) {
                 console.error('Error fetching provinces:', error);
             }
         };
 
-        fetchProvinces();
+        fetchSuppliers();
     }, []);
 
     // Fetch districts when province changes
@@ -106,7 +107,8 @@ const ManageEvents = () => {
         }
     
         try {
-            await adminApi.editEvent(editingEvent.id, editingEvent);
+            const response = await adminApi.editEvent(editingEvent.id, editingEvent);
+            console.log(response);
             setEvents(events.map(event => (event.id === editingEvent.id ? editingEvent : event)));
             setEditingEvent(null);
             setShowEditModal(false);
@@ -168,31 +170,29 @@ const ManageEvents = () => {
             reader.readAsDataURL(file);
         }
     };
+    const handleImageChangeEdit = (e) => {
+        const file = e.target.files[0];
+        console.log("file",file);
+        if (file) {
+            setEditingEvent({ ...editingEvent, image: file });
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImageEdit(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleAddEvent = async (e) => {
         e.preventDefault();
         try {
             await adminApi.createEvent(newEvent);
-            Swal.fire({
+            await Swal.fire({
                 title: 'Thành công!',
                 text: 'Sự kiện đã được thêm thành công.',
                 icon: 'success',
                 confirmButtonText: 'OK'
-            });
-            setShowAddModal(false)
-            // Đặt lại input
-            setNewEvent({
-                image: '',
-                name: '',
-                begin: '',
-                end: '',
-                province: { id: '', name: '' },
-                district: { id: '', name: '' },
-                ward: { id: '', name: '' },
-                detail: '',
-                suplier: '',
-                description: '',
-                quantity: 0,
             });
             window.location.reload()
         } catch (error) {
@@ -200,7 +200,7 @@ const ManageEvents = () => {
         }
        
     };
-    console.log("Event",events);
+    console.log("Edit",editingEvent);
     return (
         <div className="min-h-screen flex flex-col lg:flex-row">
             <Sidebar />
@@ -256,36 +256,44 @@ const ManageEvents = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {events.map((event) => (
-                                    <tr key={event.id}>
-                                        <td className="py-4 px-6 whitespace-nowrap">{event.id}</td>
-                                        <td className="py-4 px-6 whitespace-nowrap">{event.name}</td>
-                                        <td className="py-4 px-6 whitespace-nowrap">{event.begin}</td>
-                                        <td className="py-4 px-6 whitespace-nowrap">{event.end}</td>
-                                        <td className="py-4 px-6 text-wrap">{event.location.detail}-${event.location.ward}-${event.location.district}-${event.location.province}</td>
-                                        <td className="py-4 px-6">
-                                            <img src={`data:image/jpeg;base64,${event.image}`} alt={event.name} className="h-10 w-10 object-cover rounded-full" />
-                                        </td>
-                                        <td className="py-4 px-6">{event.description}</td>
-                                        <td className="py-4 px-6">{event.quantity}</td>
-                                        <td className="py-4 px-6">{event.active ? 'Hoạt động' : 'Không hoạt động'}</td>
-                                        <td className="py-4 px-6">{event.createdAt}</td>
-                                        <td className="py-4 px-6">
-                                        <button onClick={() => { setEditingEvent(event); setShowEditModal(true); }} className="text-blue-600 hover:underline mr-2">
-                                                <FontAwesomeIcon icon={faEdit} />
-                                            </button>
-                                        </td>
-
-                                        <td className="py-4 px-6">                                            
-                                        <button onClick={() => confirmToggleActive(event.id, event.active)} className="text-gray-600 px-4 py-2 rounded">
-                                            <FontAwesomeIcon icon={event.active ? faTrashAlt : faCheck} className={event.active ? "text-red-500" : "text-green-500"} />
-                                        </button>
-
-
+                                {events.length > 0 ? (
+                                    events.map((event) => (
+                                        <tr key={event.id}>
+                                            <td className="py-4 px-6 whitespace-nowrap">{event.id}</td>
+                                            <td className="py-4 px-6 whitespace-nowrap">{event.name}</td>
+                                            <td className="py-4 px-6 whitespace-nowrap">{event.begin}</td>
+                                            <td className="py-4 px-6 whitespace-nowrap">{event.end}</td>
+                                            <td className="py-4 px-6 text-wrap">
+                                                {event.location.detail}-{event.location.ward}-{event.location.district}-{event.location.province}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <img src={`data:image/jpeg;base64,${event.image}`} alt={event.name} className="h-10 w-10 object-cover rounded-full" />
+                                            </td>
+                                            <td className="py-4 px-6">{event.description}</td>
+                                            <td className="py-4 px-6">{event.quantity}</td>
+                                            <td className="py-4 px-6">{event.active ? 'Hoạt động' : 'Không hoạt động'}</td>
+                                            <td className="py-4 px-6">{event.createdAt}</td>
+                                            <td className="py-4 px-6">
+                                                <button onClick={() => { setEditingEvent(event); setShowEditModal(true); }} className="text-blue-600 hover:underline mr-2">
+                                                    <FontAwesomeIcon icon={faEdit} />
+                                                </button>
+                                            </td>
+                                            <td className="py-4 px-6">                                            
+                                                <button onClick={() => confirmToggleActive(event.id, event.active)} className="text-gray-600 px-4 py-2 rounded">
+                                                    <FontAwesomeIcon icon={event.active ? faTrashAlt : faCheck} className={event.active ? "text-red-500" : "text-green-500"} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="12" className="py-4 px-6 text-center">
+                                            Không có sự kiện nào để hiển thị.
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
+
                         </table>
                     </div>
                 </div>
@@ -306,7 +314,7 @@ const ManageEvents = () => {
                             <input
                                 type="date"
                                 placeholder="Thời gian bắt đầu"
-                                value={editingEvent.begin}
+                                value={editingEvent.begin.split()[0]}
                                 onChange={(e) => setEditingEvent({ ...editingEvent, begin: e.target.value })}
                                 className="border rounded px-2 py-1 mb-3 w-full"
                                 required
@@ -314,7 +322,7 @@ const ManageEvents = () => {
                             <input
                                 type="date"
                                 placeholder="Thời gian kết thúc"
-                                value={editingEvent.end}
+                                value={editingEvent.end.split()[0]}
                                 onChange={(e) => setEditingEvent({ ...editingEvent, end: e.target.value })}
                                 className="border rounded px-2 py-1 mb-3 w-full"
                                 required
@@ -322,48 +330,63 @@ const ManageEvents = () => {
                             <select
                                     value={editingEvent.province}
                                     onChange={(e) => {
-                                        setEditingEvent({ ...editingEvent, province: e.target.value });
-                                        handleProvinceChange(e.target.value);
+                                        const selectedProvinceId = e.target.selectedOptions[0].getAttribute('data-id');
+                                        const selectedProvinceName = e.target.value;
+                                        setEditingEvent({ ...editingEvent, province: selectedProvinceName });
+                                        handleProvinceChange(selectedProvinceId);
                                     }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
                                 >
-                                    <option value="0">Chọn tỉnh/thành phố</option>
-                                    {provinces.map((province, index) => (
-                                        <option key={index} value={province.id}>{province.full_name}</option>
+                                    <option value="" data-id="">Chọn tỉnh/thành phố</option>
+                                    {provinces.map((province) => (
+                                        <option key={province.id} value={province.full_name} data-id={province.id}>
+                                            {province.full_name}
+                                        </option>
                                     ))}
                                 </select>
+
                                 <select
                                     value={editingEvent.district}
                                     onChange={(e) => {
-                                        setEditingEvent({ ...editingEvent, district: e.target.value });
-                                        handleDistrictChange(e.target.value);
+                                        const selectedDistrictId = e.target.selectedOptions[0].getAttribute('data-id');
+                                        const selectedDistrictName = e.target.value;
+                                        setEditingEvent({ ...editingEvent, district: selectedDistrictName });
+                                        handleDistrictChange(selectedDistrictId);
                                     }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
-                                    disabled={districts.length === 0} // Disable select until districts are loaded
                                 >
-                                    <option value="">Chọn huyện/quận</option>
-                                    {districts.map((district, index) => (
-                                        <option key={index} value={district.id}>{district.full_name}</option>
+                                    <option value="" data-id="">Chọn huyện/quận</option>
+                                    {districts.map((district) => (
+                                        <option key={district.id} value={district.full_name} data-id={district.id}>
+                                            {district.full_name}
+                                        </option>
                                     ))}
                                 </select>
+
                                 <select
                                     value={editingEvent.ward}
-                                    onChange={(e) => setEditingEvent({ ...editingEvent, ward: e.target.value })}
+                                    onChange={(e) => {
+                                        // const selectedWardId = e.target.selectedOptions[0].getAttribute('data-id');
+                                        // console.log();
+                                        const selectedWardName = e.target.value;
+                                        setEditingEvent({ ...editingEvent, ward:  selectedWardName });
+                                    }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
-                                    disabled={communes.length === 0} // Disable select until communes are loaded
                                 >
-                                    <option value="">Chọn xã/phường</option>
-                                    {communes.map((commune, index) => (
-                                        <option key={index} value={commune.id}>{commune.full_name}</option>
+                                    <option value="" data-id="">Chọn xã/phường</option>
+                                    {communes.map((commune) => (
+                                        <option key={commune.id} value={commune.full_name} data-id={commune.id}>
+                                            {commune.full_name}
+                                        </option>
                                     ))}
                                 </select>
                                 <input
                                     type="text"
                                     placeholder="Số nhà"
-                                    value={editingEvent.detail}
+                                    value={editingEvent.location.detail}
                                     onChange={(e) => setEditingEvent({ ...editingEvent, detail: e.target.value })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
@@ -381,13 +404,16 @@ const ManageEvents = () => {
                                         <option key={index} value={suplier.id}>{suplier.name}</option>
                                     ))}
                                 </select>
-                            <input
-                                type="file"
-                                placeholder="URL Hình ảnh"
-                                onChange={handleImageChange}
-                                className="border rounded px-2 py-1 mb-3 w-full"
-                                required
-                            />
+                                <input
+                                    type="file"
+                                    placeholder="Hình ảnh"
+                                    onChange={handleImageChangeEdit}
+                                    className="border rounded px-2 py-1 mb-3 w-full"
+                                    required
+                                />
+                                {previewImageEdit && (
+                                    <img src={previewImageEdit} alt="Preview" className="mt-2 mb-4 w-auto h-40 rounded" />
+                                )}
                             <textarea
                                 placeholder="Mô tả"
                                 value={editingEvent.description}
@@ -421,7 +447,7 @@ const ManageEvents = () => {
                             />
                             <div className="flex justify-end">
                                 <button onClick={() => setShowEditModal(false)} className="bg-gray-600 text-white px-4 py-2 rounded mr-2">Hủy</button>
-                                <button onClick={handleEditEvent} className="bg-blue-600 text-white px-4 py-2 rounded">Lưu</button>
+                                <button onClick={handleEditEvent} className="bg-header hover:bg-btn text-white px-4 py-2 rounded">Lưu</button>
                             </div>
                         </div>
                     </div>
@@ -539,7 +565,7 @@ const ManageEvents = () => {
                                     required
                                 />
                                 {previewImage && (
-                                    <img src={previewImage} alt="Preview" className="mt-2 mb-4 w-full h-auto rounded" />
+                                    <img src={previewImage} alt="Preview" className="mt-2 mb-4 w-auto h-40 rounded" />
                                 )}
                                 <textarea
                                     placeholder="Mô tả"
@@ -556,7 +582,7 @@ const ManageEvents = () => {
                                 />
                                 <div className="flex justify-end">
                                     <button type="button" onClick={() => setShowAddModal(false)} className="bg-gray-600 text-white px-4 py-2 rounded mr-2">Hủy</button>
-                                    <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Thêm</button>
+                                    <button type="submit" className="bg-header hover:bg-btn text-white px-4 py-2 rounded">Thêm</button>
                                 </div>
                             </form>
                         </div>

@@ -7,7 +7,7 @@ const HistoryItem = ({ event, onCancel }) => {
       <div className="border-r w-full border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-6 flex flex-col justify-between leading-normal">
         <div className="mb-8">
           <div className="text-gray-900 font-bold text-2xl mb-4">{event.name}</div>
-          <p className="text-gray-700 text-base mb-2">Địa điểm: {event.location}</p>
+          <p className="text-gray-700 text-base mb-2">Địa điểm: {event.location.detail}-{event.location.ward}-{event.location.district}-{event.location.province}</p>
           <p className="text-gray-700 text-base mb-2">Ngày bắt đầu: {event.begin}</p>
         </div>
         <div className="flex items-center justify-between">

@@ -95,12 +95,28 @@ const adminApi = {
 
   editEvent: async (eventId, eventData) => {
     let accessToken = localStorage.getItem("accessToken");
+
+    // Tạo đối tượng FormData
+    const formData = new FormData();
+    formData.append("image", eventData.image);
+    formData.append("name", eventData.name);
+    formData.append("begin", eventData.begin);
+    formData.append("end", eventData.end);
+    formData.append("description", eventData.description);
+    formData.append("quantity", eventData.quantity);
+    formData.append("province", eventData.province);
+    formData.append("district", eventData.district);
+    formData.append("ward", eventData.ward);
+    formData.append("detail", eventData.detail);
+    formData.append("supplierId", eventData.supplierId);
+
     try {
       const response = await axios.put(
         `${config.baseURL}${URL_Admin}/event/update/${eventId}`,
-        eventData,
+        formData,
         {
           headers: {
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${accessToken}`,
           },
         }
@@ -135,6 +151,23 @@ const adminApi = {
     try {
       const response = await axios.get(
         `${config.baseURL}${URL_Admin}/supplier/all`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error getting all suppliers:", error);
+      throw error;
+    }
+  },
+  getAllSuplierActive: async () => {
+    let accessToken = localStorage.getItem("accessToken");
+    try {
+      const response = await axios.get(
+        `${config.baseURL}${URL_Admin}/supplier/allActive`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
