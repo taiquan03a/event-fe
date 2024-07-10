@@ -9,6 +9,7 @@ const ManageEvents = () => {
     const [events, setEvents] = useState([]);
     const [editingEvent, setEditingEvent] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showAddModal, setShowAddModal] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
     const [provinces, setProvinces] = useState([]);
     const [supliers, setSuppliers] = useState([]);
@@ -21,15 +22,14 @@ const ManageEvents = () => {
         end: '',
         description: '',
         quantity: 0,
-        province: '',
-        district: '',
-        ward: '',
+        province: { id: '', name: '' },
+        district: { id: '', name: '' },
+        ward: { id: '', name: '' },
         detail: '',
         supplierId: '',
     });
     console.log(newEvent);
 
-    const [showAddModal, setShowAddModal] = useState(false);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -60,7 +60,6 @@ const ManageEvents = () => {
         const fetchProvinces = async () => {
             try {
                 const data = await adminApi.getAllSuplier();
-                console.log(data);
                 setSuppliers(data);
             } catch (error) {
                 console.error('Error fetching provinces:', error);
@@ -173,14 +172,35 @@ const ManageEvents = () => {
     const handleAddEvent = async (e) => {
         e.preventDefault();
         try {
-            const response = await adminApi.createEvent(newEvent);
-            console.log(response);
+            await adminApi.createEvent(newEvent);
+            Swal.fire({
+                title: 'Thành công!',
+                text: 'Sự kiện đã được thêm thành công.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+            setShowAddModal(false)
+            // Đặt lại input
+            setNewEvent({
+                image: '',
+                name: '',
+                begin: '',
+                end: '',
+                province: { id: '', name: '' },
+                district: { id: '', name: '' },
+                ward: { id: '', name: '' },
+                detail: '',
+                suplier: '',
+                description: '',
+                quantity: 0,
+            });
         } catch (error) {
             console.log(error);
         }
        
     };
     console.log("Edit",editingEvent);
+    console.log("evenets",events);
     return (
         <div className="min-h-screen flex flex-col lg:flex-row">
             <Sidebar />
@@ -242,7 +262,7 @@ const ManageEvents = () => {
                                         <td className="py-4 px-6 whitespace-nowrap">{event.name}</td>
                                         <td className="py-4 px-6 whitespace-nowrap">{event.begin}</td>
                                         <td className="py-4 px-6 whitespace-nowrap">{event.end}</td>
-                                        <td className="py-4 px-6 whitespace-nowrap">{event.location}</td>
+                                        {/* <td className="py-4 px-6 whitespace-nowrap">{event.location}</td> */}
                                         <td className="py-4 px-6">
                                             <img src={`data:image/jpeg;base64,${event.image}`} alt={event.name} className="h-10 w-10 object-cover rounded-full" />
                                         </td>
@@ -435,61 +455,70 @@ const ManageEvents = () => {
                                     required
                                 />
                                 <select
+                                    value={newEvent.province.name}
                                     onChange={(e) => {
-                                        setNewEvent({ ...newEvent, province: e.target.value });
-                                        handleProvinceChange(e.target.value);
+                                        const selectedProvinceId = e.target.selectedOptions[0].getAttribute('data-id');
+                                        const selectedProvinceName = e.target.value;
+                                        setNewEvent({ ...newEvent, province: { id: selectedProvinceId, name: selectedProvinceName } });
+                                        handleProvinceChange(selectedProvinceId);
                                     }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
                                 >
-                                    <option value="">Chọn tỉnh/thành phố</option>
-                                    {provinces.map((province, index)=>{
-                                        return(
-                                            <option key={index} value={province.id}>{province.full_name}</option>
-                                        )
-                                    }
-                                              
-                                )}
+                                    <option value="" data-id="">Chọn tỉnh/thành phố</option>
+                                    {provinces.map((province) => (
+                                        <option key={province.id} value={province.full_name} data-id={province.id}>
+                                            {province.full_name}
+                                        </option>
+                                    ))}
                                 </select>
+
                                 <select
+                                    value={newEvent.district.name}
                                     onChange={(e) => {
-                                        setNewEvent({ ...newEvent, district: e.target.value });
-                                        handleDistrictChange(e.target.value);
+                                        const selectedDistrictId = e.target.selectedOptions[0].getAttribute('data-id');
+                                        const selectedDistrictName = e.target.value;
+                                        setNewEvent({ ...newEvent, district: { id: selectedDistrictId, name: selectedDistrictName } });
+                                        handleDistrictChange(selectedDistrictId);
                                     }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
-                                    disabled={districts.length === 0} // Disable select until districts are loaded
                                 >
-                                    <option value="">Chọn huyện/quận</option>
-                                    {districts.map((district, index) =>{
-                                        return (
-                                            <option key={index} value={district.id}>{district.full_name}</option>
-                                        )
-                                    } )}
+                                    <option value="" data-id="">Chọn huyện/quận</option>
+                                    {districts.map((district) => (
+                                        <option key={district.id} value={district.full_name} data-id={district.id}>
+                                            {district.full_name}
+                                        </option>
+                                    ))}
                                 </select>
+
                                 <select
-                                    onChange={(e) => setNewEvent({ ...newEvent, ward: e.target.value })}
+                                    value={newEvent.ward.name}
+                                    onChange={(e) => {
+                                        const selectedWardId = e.target.selectedOptions[0].getAttribute('data-id');
+                                        const selectedWardName = e.target.value;
+                                        setNewEvent({ ...newEvent, ward: { id: selectedWardId, name: selectedWardName } });
+                                    }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
-                                    disabled={communes.length === 0} // Disable select until communes are loaded
                                 >
-                                    <option value="">Chọn xã/phường</option>
-                                    {communes.map((commune, index) =>{
-                                        return (
-                                            <option key={index} value={commune.id}>{commune.full_name}</option>
-                                        )
-                                    } 
-                                        
-                                    )}
+                                    <option value="" data-id="">Chọn xã/phường</option>
+                                    {communes.map((commune) => (
+                                        <option key={commune.id} value={commune.full_name} data-id={commune.id}>
+                                            {commune.full_name}
+                                        </option>
+                                    ))}
                                 </select>
                                 <input
                                     type="text"
                                     placeholder="Số nhà"
+                                    value={newEvent.detail}
                                     onChange={(e) => setNewEvent({ ...newEvent, detail: e.target.value })}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
                                 />
                                 <select
+                                    value={newEvent.supplierId}
                                     onChange={(e) => {
                                         setNewEvent({ ...newEvent, supplierId: e.target.value });
                                     }}
@@ -497,11 +526,9 @@ const ManageEvents = () => {
                                     required
                                 >
                                     <option value="">Chọn nhà cung cấp</option>
-                                    {supliers.map((suplier, index) => {
-                                        return(
-                                            <option key={index} value={suplier.id}>{suplier.name}</option>
-                                        )
-                                    })}
+                                    {supliers.map((suplier, index) => (
+                                        <option key={index} value={suplier.id}>{suplier.name}</option>
+                                    ))}
                                 </select>
                                 <input
                                     type="file"
