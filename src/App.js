@@ -17,6 +17,7 @@ import BookingHistory from "./pages/BookingHistory/BookingHistory";
 import EventList from "./pages/EventList/EventList";
 import EventDetail from "./pages/EventDetail/EventDetail";
 import ManageSuplier from "./pages/ManageSuplier/ManageSuplier";
+import CanceledEvent from "./components/CanceledEvent/CanceledEvent";
 
 const ProtectedRoute = ({ element, roles }) => {
   const accessToken = localStorage.getItem("accessToken");
@@ -63,6 +64,12 @@ function App() {
               element={<BookingHistory />}
               roles={["ROLE_USER"]}
             />
+          }
+        />
+        <Route
+          path={path.canceledHistory}
+          element={
+            <ProtectedRoute element={<CanceledEvent />} roles={["ROLE_USER"]} />
           }
         />
         <Route

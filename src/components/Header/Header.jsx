@@ -26,7 +26,19 @@ function Header() {
             Swal.fire({
                 icon: 'warning',
                 title: 'Thông báo',
-                text: 'Bạn cần đăng nhập để xem lịch sử đặt chỗ.',
+                text: 'Bạn cần đăng nhập để xem lịch sử đăng ký.',
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+
+    const handleCanceledHistoryClick = (e) => {
+        if (!isLoggedIn) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thông báo',
+                text: 'Bạn cần đăng nhập để xem lịch sử hủy sự kiện.',
                 confirmButtonText: 'OK'
             });
         }
@@ -55,6 +67,8 @@ function Header() {
                         <Link to={path.about} className="text-lg font-semibold leading-6 text-white">Về chúng tôi</Link>
                         <Link to={path.events} className="text-lg font-semibold leading-6 text-white">Sự kiện</Link>
                         <Link to={path.bookingHistory} onClick={handleBookingHistoryClick} className="text-lg font-semibold leading-6 text-white">Lịch sử</Link>
+                        <Link to={path.canceledHistory} onClick={handleCanceledHistoryClick} className="text-lg font-semibold leading-6 text-white">Lịch sử hủy</Link>
+
                     </div>
                     <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                         {isLoggedIn ? (
@@ -90,7 +104,8 @@ function Header() {
                                     <Link to={path.home} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Trang chủ</Link>
                                     <Link to={path.about} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Về chúng tôi</Link>
                                     <Link to={path.events} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Sự kiện</Link>
-                                    <Link to={path.bookingHistory} onClick={handleBookingHistoryClick} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Lịch sử</Link>
+                                    <Link to={path.bookingHistory} onClick={handleBookingHistoryClick} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Lịch sử đăng ký</Link>
+                                    <Link to={path.canceledHistory} onClick={handleCanceledHistoryClick} className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Lịch sử hủy</Link>
                                 </div>
                                 <div className="py-6">
                                     {isLoggedIn ? (
