@@ -22,9 +22,9 @@ const ManageEvents = () => {
         end: '',
         description: '',
         quantity: 0,
-        province: { id: '', name: '' },
-        district: { id: '', name: '' },
-        ward: { id: '', name: '' },
+        province: '',
+        district: '',
+        ward: '',
         detail: '',
         supplierId: '',
     });
@@ -194,13 +194,13 @@ const ManageEvents = () => {
                 description: '',
                 quantity: 0,
             });
+            window.location.reload()
         } catch (error) {
             console.log(error);
         }
        
     };
-    console.log("Edit",editingEvent);
-    console.log("evenets",events);
+    console.log("Event",events);
     return (
         <div className="min-h-screen flex flex-col lg:flex-row">
             <Sidebar />
@@ -262,7 +262,7 @@ const ManageEvents = () => {
                                         <td className="py-4 px-6 whitespace-nowrap">{event.name}</td>
                                         <td className="py-4 px-6 whitespace-nowrap">{event.begin}</td>
                                         <td className="py-4 px-6 whitespace-nowrap">{event.end}</td>
-                                        {/* <td className="py-4 px-6 whitespace-nowrap">{event.location}</td> */}
+                                        <td className="py-4 px-6 text-wrap">{event.location.detail}-${event.location.ward}-${event.location.district}-${event.location.province}</td>
                                         <td className="py-4 px-6">
                                             <img src={`data:image/jpeg;base64,${event.image}`} alt={event.name} className="h-10 w-10 object-cover rounded-full" />
                                         </td>
@@ -459,7 +459,7 @@ const ManageEvents = () => {
                                     onChange={(e) => {
                                         const selectedProvinceId = e.target.selectedOptions[0].getAttribute('data-id');
                                         const selectedProvinceName = e.target.value;
-                                        setNewEvent({ ...newEvent, province: { id: selectedProvinceId, name: selectedProvinceName } });
+                                        setNewEvent({ ...newEvent, province: selectedProvinceName });
                                         handleProvinceChange(selectedProvinceId);
                                     }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
@@ -478,7 +478,7 @@ const ManageEvents = () => {
                                     onChange={(e) => {
                                         const selectedDistrictId = e.target.selectedOptions[0].getAttribute('data-id');
                                         const selectedDistrictName = e.target.value;
-                                        setNewEvent({ ...newEvent, district: { id: selectedDistrictId, name: selectedDistrictName } });
+                                        setNewEvent({ ...newEvent, district: selectedDistrictName });
                                         handleDistrictChange(selectedDistrictId);
                                     }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
@@ -495,9 +495,10 @@ const ManageEvents = () => {
                                 <select
                                     value={newEvent.ward.name}
                                     onChange={(e) => {
-                                        const selectedWardId = e.target.selectedOptions[0].getAttribute('data-id');
+                                        // const selectedWardId = e.target.selectedOptions[0].getAttribute('data-id');
+                                        // console.log();
                                         const selectedWardName = e.target.value;
-                                        setNewEvent({ ...newEvent, ward: { id: selectedWardId, name: selectedWardName } });
+                                        setNewEvent({ ...newEvent, ward:  selectedWardName });
                                     }}
                                     className="border rounded px-2 py-1 mb-3 w-full"
                                     required
