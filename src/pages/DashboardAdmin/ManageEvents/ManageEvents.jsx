@@ -385,19 +385,13 @@ const ManageEvents = () => {
                                     ))}
                                 </select>
                                 <input
-                                    type="text"
-                                    placeholder="Số nhà"
-                                    value={editingEvent.location.detail}
-                                    onChange={(e) => setEditingEvent({
-                                        ...editingEvent,
-                                        location: {
-                                            ...editingEvent.location,
-                                            detail: e.target.value
-                                        }
-                                    })}
-                                    className="border rounded px-2 py-1 mb-3 w-full"
-                                    required
-                                />
+                                type="text"
+                                placeholder={editingEvent.location.detail}
+                                //value={editingEvent.location.detail}
+                                onChange={(e) => setEditingEvent({ ...editingEvent, detail: e.target.value })}
+                                className="border rounded px-2 py-1 mb-3 w-full"
+                                required
+                            />
                                 <select
                                     value={editingEvent.supplierId}
                                     onChange={(e) => {
@@ -434,14 +428,6 @@ const ManageEvents = () => {
                                 placeholder="Số lượng"
                                 value={editingEvent.quantity}
                                 onChange={(e) => setEditingEvent({ ...editingEvent, quantity: parseInt(e.target.value) })}
-                                className="border rounded px-2 py-1 mb-3 w-full"
-                                required
-                            />
-                            <input
-                                type="text"
-                                placeholder="Trạng thái"
-                                value={editingEvent.active}
-                                onChange={(e) => setEditingEvent({ ...editingEvent, active: e.target.value })}
                                 className="border rounded px-2 py-1 mb-3 w-full"
                                 required
                             />
